@@ -8,11 +8,13 @@ import UserList from "./UserList";
 import EventList from "./EventList";
 import EventDetails from "./EventDetails";
 import UserProfile from "./UserProfile";
+import UpdateEventForm from "./UpdateEventForm";
 
 function App() {
   const [signedInUser, setSignedInUser] = useState(null);
   const [showUserButtons, setShowUserButtons] = useState(false);
   const [showEventButtons, setShowEventButtons] = useState(false);
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   const handleSignIn = (user) => {
     setSignedInUser(user);
@@ -21,11 +23,19 @@ function App() {
   const toggleUserButtons = () => {
     setShowUserButtons(!showUserButtons);
     setShowEventButtons(false);
+    setShowUpdateForm(false);
   };
 
   const toggleEventButtons = () => {
     setShowEventButtons(!showEventButtons);
     setShowUserButtons(false);
+    setShowUpdateForm(false);
+  };
+
+  const toggleUpdateForm = () => {
+    setShowUpdateForm(!showUpdateForm);
+    setShowUserButtons(false);
+    setShowEventButtons(false);
   };
 
   return (
@@ -68,6 +78,16 @@ function App() {
                 </ul>
               )}
             </li>
+            <li>
+              <button onClick={toggleUpdateForm}>Update</button>
+              {showUpdateForm && (
+                <ul>
+                  <li>
+                    <Link to="/update">Update Event</Link>
+                  </li>
+                </ul>
+              )}
+            </li>
           </ul>
         </nav>
 
@@ -85,6 +105,9 @@ function App() {
           <Route path="/events" component={EventList} />
           <Route path="/profile">
             <UserProfile user={signedInUser} />
+          </Route>
+          <Route path="/update">
+            <UpdateEventForm signedInUser={signedInUser} />
           </Route>
         </Switch>
 

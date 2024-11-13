@@ -37,6 +37,7 @@ class Event(db.Model, SerializerMixin):
             'description': self.description,
             'date': self.date.isoformat(),
             'organizer_id': self.organizer_id,
+            'organizer': self.organizer.to_dict() if self.organizer else None,
             'tasks': [task.to_dict() for task in self.tasks],
             'attendees': [attendee.to_dict() for attendee in self.attendees]
         }

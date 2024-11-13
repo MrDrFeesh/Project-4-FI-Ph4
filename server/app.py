@@ -39,6 +39,14 @@ class UserResource(Resource):
         db.session.commit()
         return jsonify(user.to_dict()), 201
 
+class UserEventsResource(Resource):
+    def get(self, user_id):
+        user = User.query.get(user_id)
+        if user:
+            events = Event.query.filter_by(organizer_id=user_id).all()
+            return jsonify([event.to_dict() for event in events])
+        return {'message': 'User not found'}, 404
+
 class EventResource(Resource):
     def get(self, event_id=None):
         if event_id:
@@ -125,6 +133,7 @@ class AttendeeResource(Resource):
         return jsonify(attendee.to_dict()), 201
 
 api.add_resource(UserResource, '/users', '/users/<int:user_id>')
+api.add_resource(UserEventsResource, '/users/<int:user_id>/events')
 api.add_resource(EventResource, '/events', '/events/<int:event_id>')
 api.add_resource(TaskResource, '/tasks', '/tasks/<int:task_id>')
 api.add_resource(AttendeeResource, '/attendees', '/attendees/<int:attendee_id>')
