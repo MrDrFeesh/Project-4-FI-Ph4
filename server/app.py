@@ -6,6 +6,7 @@
 from flask import request, jsonify
 from flask_restful import Resource, Api
 from datetime import datetime
+from dateutil.parser import isoparse
 
 # Local imports
 from config import app, db
@@ -62,7 +63,7 @@ class EventResource(Resource):
         event = Event(
             name=data['name'],
             description=data.get('description'),
-            date=datetime.fromisoformat(data['date']),
+            date=isoparse(data['date']),
             organizer_id=data['organizer_id']
         )
         db.session.add(event)
@@ -75,7 +76,7 @@ class EventResource(Resource):
         if event:
             event.name = data['name']
             event.description = data.get('description')
-            event.date = datetime.fromisoformat(data['date'])
+            event.date = isoparse(data['date'])
             event.tasks = [Task.query.get(task_id) for task_id in data['tasks']]
             db.session.commit()
             return jsonify(event.to_dict())
@@ -84,6 +85,10 @@ class EventResource(Resource):
     def delete(self, event_id):
         event = Event.query.get(event_id)
         if event:
+            # Delete related attendees
+            Attendee.query.filter_by(event_id=event_id).delete()
+            # Delete related tasks
+            Task.query.filter_by(event_id=event_id).delete()
             db.session.delete(event)
             db.session.commit()
             return {'message': 'Event deleted'}

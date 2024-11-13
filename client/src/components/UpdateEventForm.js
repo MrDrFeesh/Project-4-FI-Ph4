@@ -34,6 +34,18 @@ function UpdateEventForm({ signedInUser }) {
     setSelectedEvent(eventDetails);
   };
 
+  const handleDelete = () => {
+    fetch(`/events/${selectedEvent.id}`, {
+      method: "DELETE",
+    })
+      .then(() => {
+        history.push("/events");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   return (
     <div>
       <h2>Update Event</h2>
@@ -113,6 +125,11 @@ function UpdateEventForm({ signedInUser }) {
             </Form>
           )}
         </Formik>
+      )}
+      {selectedEvent && (
+        <button onClick={handleDelete} style={{ marginTop: "10px" }}>
+          Delete Event
+        </button>
       )}
     </div>
   );
