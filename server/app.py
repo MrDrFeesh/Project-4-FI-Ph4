@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# Standard library imports
-
 # Remote library imports
 from flask import request, jsonify
 from flask_restful import Resource, Api
@@ -13,8 +11,6 @@ from config import app, db
 from models import User, Event, Task, Attendee
 
 api = Api(app)
-
-# Views go here!
 
 @app.route('/')
 def index():
@@ -85,9 +81,7 @@ class EventResource(Resource):
     def delete(self, event_id):
         event = Event.query.get(event_id)
         if event:
-            # Delete related attendees
             Attendee.query.filter_by(event_id=event_id).delete()
-            # Delete related tasks
             Task.query.filter_by(event_id=event_id).delete()
             db.session.delete(event)
             db.session.commit()
